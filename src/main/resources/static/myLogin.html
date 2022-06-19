@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <title>登录</title>
+    </head>
+    <body>
+        <form action="/auth/form" method="post">
+            <input type="text" name="username"/>
+            <input type="password" name="password"/>
+            <div>
+                <input type="text" name="captcha"/>
+                <img src="/captcha.jpg" height="40px;" width="110px;" style="margin-left: 20px;">
+            </div>
+            <input type="submit" name="Login"/>
+        </form>
+    </body>
+</html>
