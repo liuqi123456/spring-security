@@ -12,3 +12,8 @@
     会话固定攻击
     会话过期
     会话并发控制
+    集群会话的三种方案
+        session保持
+        session复制
+        session共享
+            session独立出来，放在单独的服务器中

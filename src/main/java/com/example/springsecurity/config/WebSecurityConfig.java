@@ -1,32 +1,18 @@
 package com.example.springsecurity.config;
 
-import com.example.springsecurity.filter.MyAuthenticationFailureHandler;
-import com.example.springsecurity.filter.VerificationCodeFilter;
-import com.example.springsecurity.strategy.MyInvalidSessionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * 401 代表用户认证失败
@@ -47,6 +33,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private SpringSessionBackedSessionRegistry redisSessionRegistry;
+
 //    @Override
 //    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 //        /**
@@ -63,8 +52,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // 持久化方式
-        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
-        jdbcTokenRepository.setDataSource(dataSource);
+//        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+//        jdbcTokenRepository.setDataSource(dataSource);
         http
             .authorizeRequests()
                 .antMatchers("/admin/api/**").hasAnyAuthority("ROLE_ADMIN")
@@ -77,7 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //             * 使用自定义的方式验证 验证码
 //             */
 //            .authenticationDetailsSource(myWebAuthenticationDetailsSource)
-            .and()
+//            .and()
             /**
              * 增加自动登录功能
              */
@@ -86,7 +75,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 /**
                  * 持久化方式 可以推断该令牌是否被盗用
                  */
-            .rememberMe().userDetailsService(userDetailsService).tokenRepository(jdbcTokenRepository)
+//            .rememberMe().userDetailsService(userDetailsService).tokenRepository(jdbcTokenRepository)
                 // 设置超时时间
 //                .tokenValiditySeconds(60)
             /**
@@ -152,9 +141,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 单个用户 最大会话数设置为1
                 .maximumSessions(1)
                 // 阻止新会话登录，默认为false
-                .maxSessionsPreventsLogin(true)
+//                .maxSessionsPreventsLogin(true)
                 // 设置超时后的自定义策略
 //                .invalidSessionStrategy(new MyInvalidSessionStrategy())
+                // 使用session提供的会话注册表
+                .sessionRegistry(redisSessionRegistry)
         ;
         /**
          * 使用过滤器验证 验证码

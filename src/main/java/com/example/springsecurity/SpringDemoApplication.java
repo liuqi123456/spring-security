@@ -14,13 +14,4 @@ public class SpringDemoApplication {
         SpringApplication.run(SpringDemoApplication.class, args);
     }
 
-    /**
-     * spring security 是通过监听session的销毁事件来触发会话信息表相关清理工作
-     * @return
-     */
-    @Bean
-    public HttpSessionEventPublisher httpSessionEventPublisher(){
-        return new HttpSessionEventPublisher();
-    }
-
 }
