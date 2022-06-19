@@ -11,14 +11,19 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -35,13 +40,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthenticationProvider myAuthenticationProvider;
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        /**
-         * 使用自定义的方式验证 验证码
-         */
-        auth.authenticationProvider(myAuthenticationProvider);
-    }
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private DataSource dataSource;
+
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        /**
+//         * 使用自定义的方式验证 验证码
+//         */
+//        auth.authenticationProvider(myAuthenticationProvider);
+//    }
 
     /**
      * HttpSecurity 设计为了链式调用，使用 and方法结束当前标签，上下文才会回到HttpSecurity
@@ -50,6 +61,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // 持久化方式
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource);
         http
             .authorizeRequests()
                 .antMatchers("/admin/api/**").hasAnyAuthority("ROLE_ADMIN")
@@ -58,14 +72,49 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .anyRequest().authenticated()
             .and().csrf().disable()
             .formLogin()
+//            /**
+//             * 使用自定义的方式验证 验证码
+//             */
+//            .authenticationDetailsSource(myWebAuthenticationDetailsSource)
+            .and()
             /**
-             * 使用自定义的方式验证 验证码
+             * 增加自动登录功能
              */
-            .authenticationDetailsSource(myWebAuthenticationDetailsSource)
+            // 散列方式
+//            .rememberMe().userDetailsService(userDetailsService).key("kevin_springsecurity")
+            // 持久化方式
+            .rememberMe().userDetailsService(userDetailsService).tokenRepository(jdbcTokenRepository)
+            /**
+             * 默认提供了一个 /logout路由，
+             *  安全的注销登录状态，使httpSession失效，清空已配置的Remember-me，情况SecurityContextHolder,并注销成功后重定向到/login?logout
+             * 自定义注销登录策略
+             */
+//            .and()
+//            .logout()
+//                .logoutUrl("/myLogout")
+//                .logoutSuccessUrl("/")
+//                // logoutSuccessHandler 比 logoutSuccessUrl 更灵活
+//                .logoutSuccessHandler(new LogoutSuccessHandler() {
+//                    @Override
+//                    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+//
+//                    }
+//                })
+//                // 使该用户的HttpSession失效
+//                .invalidateHttpSession(true)
+//                // 注销成功删除指定的cookie
+//                .deleteCookies("cookie1", "cookie2")
+//                // 自定义一些清理策略，和logoutSuccessHandler一样
+//                .addLogoutHandler(new LogoutHandler() {
+//                    @Override
+//                    public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+//
+//                    }
+//                })
                 /** 自定义登录页配置 */
-            .loginPage("/myLogin.html")
-                .loginProcessingUrl("/auth/form").permitAll()
-                .failureHandler(new MyAuthenticationFailureHandler())
+//            .loginPage("/myLogin.html")
+//                .loginProcessingUrl("/auth/form").permitAll()
+//                .failureHandler(new MyAuthenticationFailureHandler())
 //            .loginProcessingUrl("/login")
 //                .successHandler(new AuthenticationSuccessHandler() {
 //                    @Override
@@ -87,7 +136,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //            .permitAll()
             .and()
             .sessionManagement().maximumSessions(1)
-//
         ;
         /**
          * 使用过滤器验证 验证码
