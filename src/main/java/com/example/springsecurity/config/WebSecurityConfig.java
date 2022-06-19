@@ -2,6 +2,7 @@ package com.example.springsecurity.config;
 
 import com.example.springsecurity.filter.MyAuthenticationFailureHandler;
 import com.example.springsecurity.filter.VerificationCodeFilter;
+import com.example.springsecurity.strategy.MyInvalidSessionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -84,6 +85,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //            .rememberMe().userDetailsService(userDetailsService).key("kevin_springsecurity")
             // 持久化方式
             .rememberMe().userDetailsService(userDetailsService).tokenRepository(jdbcTokenRepository)
+                // 设置超时时间
+//                .tokenValiditySeconds(60)
             /**
              * 默认提供了一个 /logout路由，
              *  安全的注销登录状态，使httpSession失效，清空已配置的Remember-me，情况SecurityContextHolder,并注销成功后重定向到/login?logout
@@ -135,7 +138,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                })
 //            .permitAll()
             .and()
-            .sessionManagement().maximumSessions(1)
+            /**
+             * sessionManagement 会话管理的四种策略
+             * none
+             * newSession
+             * migrateSession 默认
+             * changeSessionId
+             */
+            .sessionManagement()
+                .sessionFixation().migrateSession()
+                // 设置超时后的自定义策略
+//                .invalidSessionStrategy(new MyInvalidSessionStrategy())
         ;
         /**
          * 使用过滤器验证 验证码
