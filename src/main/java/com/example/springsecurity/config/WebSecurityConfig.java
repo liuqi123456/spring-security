@@ -83,7 +83,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
              */
             // 散列方式
 //            .rememberMe().userDetailsService(userDetailsService).key("kevin_springsecurity")
-            // 持久化方式
+                /**
+                 * 持久化方式 可以推断该令牌是否被盗用
+                 */
             .rememberMe().userDetailsService(userDetailsService).tokenRepository(jdbcTokenRepository)
                 // 设置超时时间
 //                .tokenValiditySeconds(60)
@@ -147,6 +149,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
              */
             .sessionManagement()
                 .sessionFixation().migrateSession()
+                // 单个用户 最大会话数设置为1
+                .maximumSessions(1)
+                // 阻止新会话登录，默认为false
+                .maxSessionsPreventsLogin(true)
                 // 设置超时后的自定义策略
 //                .invalidSessionStrategy(new MyInvalidSessionStrategy())
         ;

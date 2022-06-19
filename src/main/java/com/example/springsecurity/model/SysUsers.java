@@ -86,4 +86,20 @@ public class SysUsers implements UserDetails {
     public boolean isEnabled() {
         return this.enable;
     }
+
+    /**
+     * 在hashMap中，以对象为key必须覆盖hashCode和equals两个方法
+     * @param obj
+     * @return
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof SysUsers ? this.username.equals(((SysUsers)obj).username) : false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.username.hashCode();
+    }
+
 }
