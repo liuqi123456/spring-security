@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+/**
+ * 验证码
+ */
 @RestController
 public class CaptchaController {
 
