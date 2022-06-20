@@ -17,3 +17,15 @@
         session复制
         session共享
             session独立出来，放在单独的服务器中
+7.密码加密
+    spring security配置好后，自动应用密码加密
+8.跨域与CORS
+    协议跨域
+    主机跨域
+    端口跨域
+    解决跨域问题：
+        Nginx
+        JSONP jsonp利用script标签可以实现跨域，只支持get请求
+        CORS 允许服务器声明其提供的资源允许哪些站点跨域使用(使用cors来解决跨越问题，只需要后端做出支持即可)
+            DefaultCorsProcessor中的handleInternal方法是处理CORS的核心
+        备注：JSONP和CORS需要后端参与

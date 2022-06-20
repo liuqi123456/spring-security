@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <title>jsonp封装测试</title>
+        <script>
+            var getJsonp = function (url, successCallback) {
+                window.jsonp = function (data) {
+                    successCallback(data);
+                }
+                var src = "";
+                if (url.indexOf('?')) {
+                    src = url + "&callback=jsonp"
+                } else {
+                    src = url + "?callback=jsonp"
+
+                }
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = src;
+                document.head.append(script);
+            }
+            getJsonp("http://ip:port/method", function (data) {
+                console.log("得到jsonp数据：", JSON.stringify(data));
+            });
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>

@@ -129,6 +129,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                })
 //            .permitAll()
             .and()
+                /**
+                 * 启用CORS支持
+                 */
+            .cors()
+            .and()
             /**
              * sessionManagement 会话管理的四种策略
              * none
