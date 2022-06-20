@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,7 +61,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/api/**").hasRole("USER")
                 .antMatchers("/app/api/**", "/captcha.jpg").permitAll()
             .anyRequest().authenticated()
-            .and().csrf().disable()
+            .and()
+                .csrf()
+                /**
+                 * 直接禁用csrf，避免被攻击
+                 */
+//                .disable()
+                /**
+                 * 它将csrfToken值存储再用户的cookie内
+                 */
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
             .formLogin()
 //            /**
 //             * 使用自定义的方式验证 验证码
