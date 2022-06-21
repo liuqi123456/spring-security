@@ -1,14 +1,20 @@
 package com.example.springsecurity.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.www.DigestAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 
@@ -45,6 +51,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        auth.authenticationProvider(myAuthenticationProvider);
 //    }
 
+    @Autowired
+    private DigestAuthenticationEntryPoint digestAuthenticationEntryPoint;
+
+    /**
+     * 摘要认证过滤器
+     * 过滤器指定了 DigestAuthenticationEntryPoint 和 userDetailsService
+     * @return
+     */
+    public DigestAuthenticationFilter digestAuthenticationFilter(){
+        DigestAuthenticationFilter digestAuthenticationFilter = new DigestAuthenticationFilter();
+        digestAuthenticationFilter.setUserDetailsService(userDetailsService);
+        digestAuthenticationFilter.setAuthenticationEntryPoint(digestAuthenticationEntryPoint);
+        return digestAuthenticationFilter;
+    }
+
     /**
      * HttpSecurity 设计为了链式调用，使用 and方法结束当前标签，上下文才会回到HttpSecurity
      * @param http
@@ -66,12 +87,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 /**
                  * 直接禁用csrf，避免被攻击
                  */
-//                .disable()
+                .disable()
                 /**
                  * 它将csrfToken值存储再用户的cookie内
                  */
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
-            .formLogin()
+//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
+                /**
+                 * http基本认证
+                 */
+//                .httpBasic().and()
+                /**
+                 * http摘要认证
+                 */
+                .exceptionHandling().authenticationEntryPoint(digestAuthenticationEntryPoint)
+                .and()
+                .addFilter(digestAuthenticationFilter())
+                /**
+                 * security 提供的登录页面
+                 */
+//            .formLogin()
 //            /**
 //             * 使用自定义的方式验证 验证码
 //             */
@@ -138,7 +172,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                    }
 //                })
 //            .permitAll()
-            .and()
+//            .and()
                 /**
                  * 启用CORS支持
                  */

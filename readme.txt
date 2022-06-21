@@ -39,4 +39,15 @@
         HttpSessionCsrfTokenRepository，这种方式再某些单页面应用中局限性较大，灵活性不足
         CookieCsrfTokenRepository,这种方式更加灵活可行的方案，它将csrfToken值存储再用户的cookie内
     备注：系统前端并非在浏览器中运作，就应当关闭csrf
-10.
+10.单点登录与CAS
+    统一了不同系统间的账户体系
+    CAS三个重要术语
+        TGT 登录后生成的票根
+        TGC 存储在cookie中的一段数据
+        ST cas server使用TGT签发的一张一次性票根
+11.Http认证
+    http基本认证
+        RFC2616中定义的一种认证模式
+            优点是使用简单、没有复杂页面交互
+    http摘要认证
+        http摘要认证使用对通信双方都可知的口令进行校验
