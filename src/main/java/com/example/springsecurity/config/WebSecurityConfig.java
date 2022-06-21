@@ -51,20 +51,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        auth.authenticationProvider(myAuthenticationProvider);
 //    }
 
-    @Autowired
-    private DigestAuthenticationEntryPoint digestAuthenticationEntryPoint;
-
-    /**
-     * 摘要认证过滤器
-     * 过滤器指定了 DigestAuthenticationEntryPoint 和 userDetailsService
-     * @return
-     */
-    public DigestAuthenticationFilter digestAuthenticationFilter(){
-        DigestAuthenticationFilter digestAuthenticationFilter = new DigestAuthenticationFilter();
-        digestAuthenticationFilter.setUserDetailsService(userDetailsService);
-        digestAuthenticationFilter.setAuthenticationEntryPoint(digestAuthenticationEntryPoint);
-        return digestAuthenticationFilter;
-    }
+//    /**
+//     * 摘要身份验证入口点
+//     */
+//    @Autowired
+//    private DigestAuthenticationEntryPoint digestAuthenticationEntryPoint;
+//
+//    /**
+//     * 摘要认证过滤器
+//     * 过滤器指定了 DigestAuthenticationEntryPoint 和 userDetailsService
+//     * @return
+//     */
+//    public DigestAuthenticationFilter digestAuthenticationFilter(){
+//        DigestAuthenticationFilter digestAuthenticationFilter = new DigestAuthenticationFilter();
+//        digestAuthenticationFilter.setUserDetailsService(userDetailsService);
+//        digestAuthenticationFilter.setAuthenticationEntryPoint(digestAuthenticationEntryPoint);
+//        return digestAuthenticationFilter;
+//    }
 
     /**
      * HttpSecurity 设计为了链式调用，使用 and方法结束当前标签，上下文才会回到HttpSecurity
@@ -99,13 +102,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 /**
                  * http摘要认证
                  */
-                .exceptionHandling().authenticationEntryPoint(digestAuthenticationEntryPoint)
-                .and()
-                .addFilter(digestAuthenticationFilter())
+//                .exceptionHandling().authenticationEntryPoint(digestAuthenticationEntryPoint)
+//                .and()
+//                .addFilter(digestAuthenticationFilter())
                 /**
                  * security 提供的登录页面
                  */
-//            .formLogin()
+            .formLogin()
 //            /**
 //             * 使用自定义的方式验证 验证码
 //             */
@@ -172,7 +175,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                    }
 //                })
 //            .permitAll()
-//            .and()
+            .and()
                 /**
                  * 启用CORS支持
                  */
