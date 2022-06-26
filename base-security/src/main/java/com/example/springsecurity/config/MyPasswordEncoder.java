@@ -1,4 +1,4 @@
-//package com.example.springsecurity.config;//package com.example.springsecurity.service;
+package com.example.springsecurity.config;//package com.example.springsecurity.config;//package com.example.springsecurity.service;
 //
 //import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.stereotype.Component;

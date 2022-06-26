@@ -1,4 +1,4 @@
-//package com.example.springsecurity.config;
+package com.example.springsecurity.config;//package com.example.springsecurity.config;
 //
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.security.crypto.password.NoOpPasswordEncoder;

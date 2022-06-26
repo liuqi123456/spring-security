@@ -1,6 +1,5 @@
 package com.example.springsecurity.controller;
 
-import com.example.springsecurity.model.SysUsers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
