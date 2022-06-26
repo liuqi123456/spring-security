@@ -51,3 +51,41 @@
             优点是使用简单、没有复杂页面交互
     http摘要认证
         http摘要认证使用对通信双方都可知的口令进行校验
+12.@EnableWebSecurity与过滤器机制
+    Spring security的核心实现是通过一条过滤器链来确定用户的每一个请求应该得到什么样的反馈
+13.Spring social 实现OAuth对接
+    理解OAuth的允许流程，则必须认识4个重要的角色
+        a.Resource Owner        资源所有者，通常指用户，例如：每一个QQ用户
+        b.Resource Server       资源服务器，指存放用户受保护资源的服务器，例如：存储QQ用户基本信息的服务器
+        c.Client                客户端，指需要获取用户资源的第三方应用，例如：CSDN网站
+        d.Authorization Server  授权服务器，用于验证资源所有者，并在验证成功之后向客户端发放相关访问令牌，例如：QQ授权登录页面
+        客户端请求授权需许可
+            ->用户同意许可
+                ->客户端携带用户提供的授权许可向授权服务器申请访问令牌
+                    ->授权服务器验证客户端及其携带的授权许可，确认有效后发放访问令牌
+                        ->客户端使用访问令牌向资源服务器申请资源
+                            ->资源服务器验证访问令牌，确认无误后向客户端提供资源
+    OAuth定义了4中授权模式
+        a.授权码模式
+            授权码模式是功能最完整、流程最严密的授权模式，它将用户引导到授权服务器进行身份验证，授权服务器将发放的访问令牌传递给客户端。
+        b.隐式授权模式
+            隐式授权模式要求：用户登录并对第三方应用进行授权，直接返回访问token，通过token访问资源
+            相比授权码模式，它少了一次授权码的颁发与客户端使用授权码换取token的过程
+        c.密码授权模式
+            就是客户端直接携带密码向授权服务器申请访问令牌
+        d.客户端模式
+            客户端提前向授权服器申请应用公钥、密钥，并通过这些关键细腻些向授权服务器申请访问令牌
+14.Spring Security Oauth 实现Oauth对接
+    spring security5.0集成了oauth客户端模块，该模块包含了三个子模块
+        spring-security-oauth2-core
+        spring-security-oauth2-jose 支持jose协议组
+        spring-security-oauth2-client
+    Oauth标准制定的形式
+        获取code
+        使用code交换access_token
+        携带access_token请求被保护的用户信息和其它资源
+    spring security 提供了相应的扩展接口和配置方法
+        Redirection Endpoint 支持自定义重定向端点
+        Oauth2AccessTokenResponseClient 实现了以code传递给access_token的具体逻辑
+        UserInfo Endpoint 支持自定义用户信息端点
+15.
